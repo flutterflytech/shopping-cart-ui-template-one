@@ -70,9 +70,10 @@ class _StackItemState extends State<StackItem> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
+
                 Text(
                   'Design your space',
-                  style: TextStyle(fontSize: 40, color: Colors.white),
+                  style: TextStyle(fontSize: 40, color: Colors.white,),
                 ),
                 Text(
                   'Home & Living',

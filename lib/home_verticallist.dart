@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+
+import 'fetch_data.dart';
 
 class VerticalList extends StatefulWidget {
   @override
@@ -7,8 +11,22 @@ class VerticalList extends StatefulWidget {
 
 class _VerticalListState extends State<VerticalList> {
   @override
+  List<Post> list = [];
+  void initState() {
+    getUserData();
+    super.initState();
+  }
+  getUserData()async{
+    list = await fetchPost();
+
+    //print('Final List ==>>>' + list[6].toString());
+    setState(() {});
+
+  }
+  @override
   Widget build(BuildContext context) {
     return Container(
+
 
       child: Column(
 
@@ -17,7 +35,7 @@ class _VerticalListState extends State<VerticalList> {
           Container(
             child: Padding(
               padding: const EdgeInsets.only(left: 20,bottom: 12),
-              child: Text("what's new", style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold),),
+              child: Text("what's new", style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold,fontFamily: 'Pacifico'),),
             ),
           ),
           Container(
@@ -25,9 +43,10 @@ class _VerticalListState extends State<VerticalList> {
             child: ListView.builder(
                 scrollDirection: Axis.vertical,
 
-                itemCount: 10,
+                itemCount: list.length,
                 itemBuilder: (context, index){
-                  return ListItemVertical();
+                  Post data = list[index];
+                  return ListItemVertical(data: data);
                 }
             ),
           )
@@ -35,10 +54,34 @@ class _VerticalListState extends State<VerticalList> {
       ),
     );
   }
+
+  Future<List<Post>> fetchPost() async {
+    final response =  await http.get('https://my-json-server.typicode.com/ravishankarsingh1996/demoJsonRepo/db');
+
+    if (response.statusCode == 200) {
+      // If server returns an OK response, parse the JSON.
+      //print(response.body);
+      var data = json.decode(response.body);
+      var rest =data['data'] as List;
+      print(rest);
+      List<Post> list = rest.map((json) => Post.fromJson(json)).toList();
+
+      return list;
+
+
+      //return Post.fromJson(json.decode(response.body));
+    } else {
+      // If that response was not OK, throw an error.
+      throw Exception('Failed to load post');
+    }
+
+  }
 }
 
 
 class ListItemVertical extends StatefulWidget {
+  final Post data;
+  ListItemVertical({this.data});
   @override
   _ListItemVerticalState createState() => _ListItemVerticalState();
 }
@@ -46,6 +89,7 @@ class ListItemVertical extends StatefulWidget {
 class _ListItemVerticalState extends State<ListItemVertical> {
   @override
   Widget build(BuildContext context) {
+    var img = MediaQuery.of(context).size;
     return Container(
     //  margin: EdgeInsets.only(left: 5, right: 5, top: 10, bottom: 10),
       child: Container(
@@ -67,13 +111,16 @@ class _ListItemVerticalState extends State<ListItemVertical> {
                 crossAxisAlignment:
                 CrossAxisAlignment.start,
                 children: <Widget>[
-                  Image.network(
-                    'https://www.styleathome.com/assets/img/default.jpg?v=1522265967',
+                  Center(
+                    child: Image.network(
+                      widget.data.itemImage, height: img.height * 0.3,
+                      width: img.width * 0.6,
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(
                         left: 6.0, top: 8.0),
-                    child: Text('Flyknit Goddess',style: TextStyle(fontWeight: FontWeight.bold),),
+                    child: Text(widget.data.itemName,style: TextStyle(fontWeight: FontWeight.bold,fontFamily: 'Acme'),),
                   ),
                   Padding(
                     padding:
@@ -82,7 +129,7 @@ class _ListItemVerticalState extends State<ListItemVertical> {
                       children: <Widget>[
                         Text('Nike'),
                         Spacer(),
-                        Text('\$120',style: TextStyle(fontWeight: FontWeight.bold),)
+                        Text('\$' +widget.data.itemPrice,style: TextStyle(fontWeight: FontWeight.bold),)
                       ],
                     ),
                   )

@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:shopping_app/item_horizontallist.dart';
 import 'package:shopping_app/itemdetail/back_button.dart';
@@ -5,6 +7,7 @@ import 'package:shopping_app/itemdetail/item_detail_bottom_bar.dart';
 import 'package:shopping_app/itemdetail/item_image.dart';
 import 'package:shopping_app/itemdetail/item_name_price.dart';
 
+import '../fetch_data.dart';
 import 'add_favorite.dart';
 import 'item_description.dart';
 
@@ -14,6 +17,18 @@ class ItemDetails extends StatefulWidget {
 }
 
 class _ItemDetailsState extends State<ItemDetails> {
+  List<Post> list = [];
+  void initState() {
+    getUserData();
+    super.initState();
+  }
+  getUserData()async{
+    list = await fetchPost();
+
+    //print('Final List ==>>>' + list[6].toString());
+    setState(() {});
+
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -192,9 +207,10 @@ class _ItemDetailsState extends State<ItemDetails> {
                       height: 200,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
-                        itemCount: 20,
+                        itemCount: list.length,
                         itemBuilder: (context, index) {
-                          return ListItem();
+                          Post data = list[index];
+                          return ListItem(data: data);
                         },
                       ),
                     )
@@ -206,5 +222,26 @@ class _ItemDetailsState extends State<ItemDetails> {
         ),
       ),
     );
+  }
+  Future<List<Post>> fetchPost() async {
+    final response =  await http.get('https://my-json-server.typicode.com/ravishankarsingh1996/demoJsonRepo/db');
+
+    if (response.statusCode == 200) {
+      // If server returns an OK response, parse the JSON.
+      //print(response.body);
+      var data = json.decode(response.body);
+      var rest =data['data'] as List;
+      print(rest);
+      List<Post> list = rest.map((json) => Post.fromJson(json)).toList();
+
+      return list;
+
+
+      //return Post.fromJson(json.decode(response.body));
+    } else {
+      // If that response was not OK, throw an error.
+      throw Exception('Failed to load post');
+    }
+
   }
 }

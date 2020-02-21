@@ -10,6 +10,7 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^0.1.2
+  http: ^0.12.0+4
 
 dev_dependencies:
   flutter_test:
@@ -17,3 +18,13 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  fonts:
+    - family: Plaster
+      fonts:
+        - asset: fonts/plaster-regular.ttf
+    - family: Acme
+      fonts:
+        - asset: fonts/Acme-Regular.ttf
+    - family: Pacifico
+      fonts:
+        - asset: fonts/Pacifico-Regular.ttf

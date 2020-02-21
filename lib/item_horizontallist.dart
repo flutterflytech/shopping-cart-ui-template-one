@@ -1,5 +1,8 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
+import 'fetch_data.dart';
 import 'itemdetail/item_detail_page.dart';
 
 class HorizontalList extends StatefulWidget {
@@ -8,6 +11,20 @@ class HorizontalList extends StatefulWidget {
 }
 
 class _HorizontalListState extends State<HorizontalList> {
+  List<Post> list = [];
+  @override
+  void initState() {
+    getUserData();
+    super.initState();
+
+  }
+  getUserData() async{
+    list = await fetchPost();
+
+    //print('Final List ==>>>' + list[6].toString());
+    setState(() {});
+
+  }
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -19,16 +36,17 @@ class _HorizontalListState extends State<HorizontalList> {
             padding: const EdgeInsets.only(left: 20, bottom: 10),
             child: Text(
               'You may like',
-              style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 22,fontWeight: FontWeight.bold,fontFamily: 'Pacifico',),
             ),
           ),
           Container(
             height: 200,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: 20,
+              itemCount: list.length,
               itemBuilder: (context, index){
-                return ListItem();
+                Post data = list[index];
+                return ListItem(data: data);
               },
             ),
           )
@@ -36,10 +54,35 @@ class _HorizontalListState extends State<HorizontalList> {
       ),
     );
   }
+  Future<List<Post>> fetchPost() async {
+    final response =  await http.get('https://my-json-server.typicode.com/ravishankarsingh1996/demoJsonRepo/db');
+
+    if (response.statusCode == 200) {
+      // If server returns an OK response, parse the JSON.
+      //print(response.body);
+      var data = json.decode(response.body);
+      var rest =data['data'] as List;
+      print(rest);
+      List<Post> list = rest.map((json) => Post.fromJson(json)).toList();
+
+      return list;
+
+
+      //return Post.fromJson(json.decode(response.body));
+    } else {
+      // If that response was not OK, throw an error.
+      throw Exception('Failed to load post');
+    }
+
+  }
 }
 
 
 class ListItem extends StatefulWidget {
+  final Post data;
+  ListItem({this.data});
+
+
   @override
   _ListItemState createState() => _ListItemState();
 }
@@ -58,8 +101,10 @@ class _ListItemState extends State<ListItem> {
       }
     });
   }
+
   @override
   Widget build(BuildContext context) {
+  var img = MediaQuery.of(context).size;
     return Container(
       margin: EdgeInsets.only(left: 10, right: 5, top: 10, bottom: 10),
       child: Stack(
@@ -92,22 +137,25 @@ class _ListItemState extends State<ListItem> {
                       crossAxisAlignment:
                       CrossAxisAlignment.start,
                       children: <Widget>[
-                        Image.network(
-                          'https://www.styleathome.com/assets/img/default.jpg?v=1522265967',
+                        Center(
+                          child: Image.network(
+                            widget.data.itemImage, height: img.height * 0.2,width: img.width * 0.2,
+                          ),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(
                               left: 6.0, top: 8.0),
-                          child: Text('Flyknit Goddess',style: TextStyle(fontWeight: FontWeight.bold),),
+                          child: Text(widget.data.itemName,style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Plaster'),),
                         ),
                         Padding(
                           padding:
                           const EdgeInsets.all(6.0),
                           child: Row(
                             children: <Widget>[
-                              Text('Nike'),
+                              Text(widget.data.itemRating ),
+                              Icon(Icons.star,size: 15,color: Colors.orangeAccent,),
                               Spacer(),
-                              Text('\$120',style: TextStyle(fontWeight: FontWeight.bold),)
+                              Text('\$'+widget.data.itemPrice,style: TextStyle(fontWeight: FontWeight.bold),)
                             ],
                           ),
                         )
@@ -122,7 +170,7 @@ class _ListItemState extends State<ListItem> {
             top: 5,
             right: 5,
             child: IconButton(
-              icon: (_isFavourite ? Icon(Icons.favorite_border,color: Colors.white,) : Icon(Icons.favorite,color: Colors.red,)),
+              icon: (_isFavourite ? Icon(Icons.favorite_border,color: Colors.grey) : Icon(Icons.favorite,color: Colors.red,)),
               onPressed: _toggleFavorite,
 
 
@@ -132,4 +180,5 @@ class _ListItemState extends State<ListItem> {
       ),
     );
   }
+
 }
