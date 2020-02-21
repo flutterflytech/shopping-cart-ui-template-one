@@ -2,7 +2,7 @@
 
 A new Flutter application.
 
-#Demo
+# Demo
 
 <img src="extra/demo.gif"/>
 
@@ -25,6 +25,6 @@ I will be updating this as I implement more functionality.
 
 
 
-##Special Thanks
+## Special Thanks
 
 Mr. Ravi Shankar Singh @ravishankarsingh1996
