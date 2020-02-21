@@ -10,13 +10,13 @@ A new Flutter application.
 
 <div class="row">
   <div class="column">
-    <img src="snap3.jpg" >
+    <img src="extra/snap3.jpg" >
   </div>
   <div class="column">
-    <img src="snap2.jpg">
+    <img src="extra/snap2.jpg">
   </div>
   <div class="column">
-    <img src="snap1.jpg" >
+    <img src="extra/snap1.jpg" >
   </div>
 </div>
 
