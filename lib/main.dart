@@ -32,12 +32,10 @@ class OnlineShopping extends StatefulWidget {
 class _OnlineShoppingState extends State<OnlineShopping> {
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       bottomNavigationBar: BarBottom(),
       body: SafeArea(
         child: SingleChildScrollView(
-
           child: Container(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,12 +46,24 @@ class _OnlineShoppingState extends State<OnlineShopping> {
                     StackItem(),
                   ],
                 ),
-                    TabView(),
-                    Divider(
-                      thickness: 2,
+                TabView(),
+                Divider(
+                  thickness: 2,
+                ),
+                HorizontalList(),
+                Container(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 20, bottom: 12),
+                    child: Text(
+                      "What's new",
+                      style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Pacifico'),
                     ),
-                    HorizontalList(),
-                    VerticalList()
+                  ),
+                ),
+                VerticalList()
               ],
             ),
           ),
@@ -62,5 +72,3 @@ class _OnlineShoppingState extends State<OnlineShopping> {
     );
   }
 }
-
-
